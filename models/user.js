@@ -26,11 +26,16 @@ const userSchema = new Schema({
         type: 'String'
     },
     phoneNumber:{
-        type: 'String'
+        type: 'String',
+        required:true
     },
     orders:[{
       type:mongoose.Schema.Types.ObjectId,
       ref:"order"  
+    }],
+    favourites:[{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"product"  
     }],
     date:
     {

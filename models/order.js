@@ -26,6 +26,9 @@ const orderSchema = new Schema({
     status: {
         type: "String"
     },
+    address: {
+        type: 'String'
+    },
     date:
     {
         type: Date,

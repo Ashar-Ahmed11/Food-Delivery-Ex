@@ -62,7 +62,7 @@ router.get('/products/:categoryID?', async (req, res) => {
     try {
         const categoryID = req.params.categoryID
         if (categoryID) {
-            const products = await Product.find({category:categoryID}).populate("category")
+            const products = await Product.find({ category: categoryID }).populate("category")
             return res.send(products)
         }
         else {
@@ -95,6 +95,50 @@ router.delete('/deleteProduct/:id', async (req, res) => {
         const productID = req.params.id
         const deletedProduct = await Product.findByIdAndDelete(productID)
         return res.send(deletedProduct)
+    } catch (error) {
+        // res.send(error)
+        console.log(error.message)
+        return res.status(500).send("Some Internal Server Error")
+
+    }
+})
+router.post('/addToFavourite/:productID', fetchUser, async (req, res) => {
+    try {
+        const user = req.user
+        const productID = req.params.productID
+        const currentUserState = await User.findById(user)
+        let isAlreadyAdded = currentUserState.favourites.find((e) => e == productID)
+        if (!isAlreadyAdded) {
+            const favouriteUser = await User.findByIdAndUpdate(user, { $push: { favourites: [productID] } }, { new: true })
+                .populate("favourites")
+                .populate({ path: "orders", populate: [{ path: "products.product" }] })
+                .select("-password")
+
+
+            return res.send(favouriteUser)
+        }
+        else{
+            return res.send("The product is already added to Favourites")
+        }
+    } catch (error) {
+        // res.send(error)
+        console.log(error.message)
+        return res.status(500).send("Some Internal Server Error")
+
+    }
+})
+
+router.delete('/removeFromFavourite/:productID', fetchUser, async (req, res) => {
+    try {
+        const user = req.user
+        const productID = req.params.productID
+        const favouriteUser = await User.findByIdAndUpdate(user, { $pull: { favourites: productID } }, { new: true })
+            .populate("favourites")
+            .populate({ path: "orders", populate: [{ path: "products.product" }] })
+            .select("-password")
+
+
+        return res.send(favouriteUser)
     } catch (error) {
         // res.send(error)
         console.log(error.message)
