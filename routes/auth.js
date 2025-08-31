@@ -13,6 +13,7 @@ router.post('/createuser',
             body("email").isEmail().withMessage("Please enter a valid e-mail address"),
             body("firstName").notEmpty().withMessage("Please enter your first name"),
             body("lastName").notEmpty().withMessage("Please enter your last name"),
+            body("phoneNumber").notEmpty().withMessage("Please enter your phone number"),
             body("password").notEmpty().withMessage("Please enter a password"),
         ],
     ]
